@@ -110,14 +110,22 @@ function registerPublishedImages(md, imageRoot) {
 }
 
 module.exports = {
-  setupMarkdown(md, { pluginDir }) {
+  setupMarkdown(md, { pluginDir, settings = {} }) {
     registerPublishedImages(md, resolve(pluginDir, "../../site/img/user"));
+    const columnBackgrounds = typeof settings.columnBackgrounds === "string"
+      ? settings.columnBackgrounds.split(",").map((color) => color.trim())
+      : [];
+
     function renderColumns(source, env) {
       const columns = splitColumns(md, source);
-      const html = columns.map((column) => {
-        const background = /^\n*\{background=(#[\da-f]{6})\}[ \t]*(?:\n|$)/i.exec(column);
-        const style = background ? ` style="--horizontal-block-background: ${background[1]}"` : "";
-        const content = background ? column.slice(background[0].length) : column;
+      const html = columns.map((column, index) => {
+        const inlineBackground = /^\n*\{background=(#[\da-f]{6})\}[ \t]*(?:\n|$)/i.exec(column);
+        const settingIndex = columnBackgrounds.length === 1 ? 0 : index;
+        const color = inlineBackground?.[1] ?? columnBackgrounds[settingIndex] ?? "";
+        const style = /^#(?:[\da-f]{3}|[\da-f]{6})$/i.test(color)
+          ? ` style="--horizontal-block-background: ${color}"`
+          : "";
+        const content = inlineBackground ? column.slice(inlineBackground[0].length) : column;
         return `<div class="garden-horizontal-block"${style}>${md.render(content, { ...env, horizontalBlocks: true })}</div>`;
       });
       return `<div class="garden-horizontal-blocks">${html.join("\n")}</div>\n`;

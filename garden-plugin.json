@@ -1,10 +1,19 @@
 {
   "id": "horizontal-blocks",
   "name": "Horizontal Blocks for Digital Garden",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Renders Horizontal Blocks callouts and fences as responsive columns and shows reading time below note titles.",
   "author": "Codex",
   "hooks": "index.js",
   "slots": { "notes.header": "templates/reading-time.njk" },
-  "styles": ["styles.css"]
+  "styles": ["styles.css"],
+  "settings": [
+    {
+      "key": "columnBackgrounds",
+      "name": "Column backgrounds",
+      "description": "Enter one hex color for every column, or a comma-separated list in column order. A blank entry uses the theme background.",
+      "type": "text",
+      "default": ""
+    }
+  ]
 }
