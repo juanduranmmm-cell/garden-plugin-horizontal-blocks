@@ -29,7 +29,13 @@ Add an image, link, or list here.
 ```
 ~~~
 
-Use either `horizontal` or `hblock`. Put each separator on its own unindented line. For a horizontal rule inside a column, use `***`. Digital Garden still handles links and images through its regular publishing pipeline. The published columns have equal widths and the page does not include Obsidian's editor controls or saved column widths.
+Use either `horizontal` or `hblock`. Put each separator on its own unindented line. For a horizontal rule inside a column, use `***`. The published columns have equal widths and the page does not include Obsidian's editor controls or saved column widths.
+
+## Obsidian images in columns
+
+Use `![[image.png]]` or `![[Attachments/image.png]]` for an image already published to the garden. If multiple published images have the same filename, use the full vault-relative path. Standard Markdown image syntax works with public URLs too.
+
+Digital Garden's Obsidian publisher skips attachment discovery inside fenced blocks. To upload a local image to Forestry, include its embed in the regular body of a published note outside any code fence. Then publish or republish that note. Keep the embed there so the attachment remains part of the published garden.
 
 ## Reading time
 

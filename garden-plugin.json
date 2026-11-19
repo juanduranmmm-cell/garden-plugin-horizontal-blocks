@@ -1,7 +1,7 @@
 {
   "id": "horizontal-blocks",
   "name": "Horizontal Blocks for Digital Garden",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "Renders Horizontal Blocks fences as responsive columns and shows reading time below note titles.",
   "author": "Codex",
   "hooks": "index.js",
