@@ -11,6 +11,12 @@
   overflow-wrap: anywhere;
 }
 
+.garden-horizontal-block[style*="--horizontal-block-background"] {
+  background-color: var(--horizontal-block-background);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+
 .garden-horizontal-block img {
   max-width: 100%;
   height: auto;

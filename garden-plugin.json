@@ -1,7 +1,7 @@
 {
   "id": "horizontal-blocks",
   "name": "Horizontal Blocks for Digital Garden",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Renders Horizontal Blocks callouts and fences as responsive columns and shows reading time below note titles.",
   "author": "Codex",
   "hooks": "index.js",

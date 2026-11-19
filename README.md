@@ -32,6 +32,22 @@ Use the `[!horizontal]` callout and put `> ---` between columns. Keep the `>` pr
 
 To migrate an existing block, replace its opening fence with `> [!horizontal]`, remove the closing fence and add `> ` to each line of the body. Publish the note again after updating the garden plugin.
 
+Use the full path relative to the vault for an attachment in a different folder, such as `![[Attachments/Charts/diagram.png]]`. To check whether Obsidian resolves the target, open the image from the callout in Reading view. Digital Garden uploads the file during publication. The garden plugin can also resolve the full path or a note-relative path if a raw embed refers to an image already on the site.
+
+## Color a column
+
+Put `{background=#334466}` on the first line of the column to set its background on the published site. Choose a six-digit hex color that contrasts with your theme's text.
+
+~~~markdown
+> [!horizontal]
+> {background=#334466}
+> ### Diagram
+> ![[Attachments/Charts/diagram.png]]
+> ---
+> ### Notes
+> Describe the diagram here.
+~~~
+
 ## Fenced Horizontal Blocks
 
 ~~~markdown

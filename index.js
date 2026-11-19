@@ -1,4 +1,4 @@
-const { basename, resolve } = require("node:path");
+const { basename, posix, resolve } = require("node:path");
 const { globSync } = require("glob");
 const { parse } = require("node-html-parser");
 
@@ -70,7 +70,7 @@ function registerPublishedImages(md, imageRoot) {
     const embed = /^!\[\[([^\]\r\n]+)\]\]/.exec(state.src.slice(state.pos, state.posMax));
     if (!embed) return false;
 
-    const [rawTarget, ...modifiers] = embed[1].split("|");
+    const [rawTarget, ...modifiers] = embed[1].split(/\\?\|/);
     const target = rawTarget.trim();
     if (!/\.(?:avif|bmp|gif|ico|jpe?g|png|svg|webp)$/i.test(target)) return false;
 
@@ -83,7 +83,18 @@ function registerPublishedImages(md, imageRoot) {
       }
     }
 
-    const path = paths.has(target) ? target : filenames.get(target);
+    const notesPrefix = "/src/site/notes/";
+    const input = "/" + (state.env.page?.inputPath ?? "").replace(/\\/g, "/");
+    const noteStart = input.lastIndexOf(notesPrefix);
+    const noteFolder = noteStart === -1
+      ? ""
+      : posix.dirname(input.slice(noteStart + notesPrefix.length));
+    const local = posix.join(noteFolder, target);
+    const relative = target.startsWith("./") || target.startsWith("../");
+    const bareName = !target.includes("/");
+    const choices = bareName || relative ? [local, target] : [target, local];
+    const path = choices.find((candidate) => paths.has(candidate)) ??
+      (bareName ? filenames.get(target) : undefined);
     if (!path) return false;
     if (!silent) {
       const token = state.push("image", "img", 0);
@@ -104,7 +115,10 @@ module.exports = {
     function renderColumns(source, env) {
       const columns = splitColumns(md, source);
       const html = columns.map((column) => {
-        return `<div class="garden-horizontal-block">${md.render(column, { ...env, horizontalBlocks: true })}</div>`;
+        const background = /^\n*\{background=(#[\da-f]{6})\}[ \t]*(?:\n|$)/i.exec(column);
+        const style = background ? ` style="--horizontal-block-background: ${background[1]}"` : "";
+        const content = background ? column.slice(background[0].length) : column;
+        return `<div class="garden-horizontal-block"${style}>${md.render(content, { ...env, horizontalBlocks: true })}</div>`;
       });
       return `<div class="garden-horizontal-blocks">${html.join("\n")}</div>\n`;
     }
