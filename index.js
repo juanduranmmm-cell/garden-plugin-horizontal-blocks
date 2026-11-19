@@ -25,12 +25,44 @@ function splitColumns(md, source) {
   return columns;
 }
 
+const HORIZONTAL_CALLOUT = /^\s*\[!(?:horizontal|hblock)\]\s*$/i;
+
+function readQuotedLine(state, line) {
+  const indentation = state.sCount[line] - state.blkIndent;
+  const start = state.bMarks[line] + state.tShift[line];
+  if (indentation < 0 || indentation >= 4 || state.src[start] !== ">") {
+    return null;
+  }
+
+  return state.src.slice(start + 1, state.eMarks[line]).replace(/^[ \t]/, "");
+}
+
+function parseHorizontalCallout(state, startLine, endLine, silent) {
+  const marker = readQuotedLine(state, startLine);
+  if (marker === null || !HORIZONTAL_CALLOUT.test(marker)) return false;
+  if (silent) return true;
+
+  const lines = [];
+  let line = startLine + 1;
+  for (; line < endLine; line++) {
+    const body = readQuotedLine(state, line);
+    if (body === null || HORIZONTAL_CALLOUT.test(body)) break;
+    lines.push(body);
+  }
+
+  const token = state.push("horizontal_blocks", "div", 0);
+  token.content = lines.join("\n");
+  token.map = [startLine, line];
+  state.line = line;
+  return true;
+}
+
 function registerPublishedImages(md, imageRoot) {
   let paths;
   let filenames;
 
-  // The Obsidian publisher treats these containers as code fences. Images
-  // published elsewhere in the garden can still be linked by vault path.
+  // Resolve legacy fences that refer to assets already in the garden.
+  // Callouts usually arrive with image links converted by the publisher.
   md.inline.ruler.before("image", "horizontal_blocks_image", (state, silent) => {
     if (!state.env.horizontalBlocks || !state.src.startsWith("![[", state.pos)) {
       return false;
@@ -69,18 +101,28 @@ function registerPublishedImages(md, imageRoot) {
 module.exports = {
   setupMarkdown(md, { pluginDir }) {
     registerPublishedImages(md, resolve(pluginDir, "../../site/img/user"));
+    function renderColumns(source, env) {
+      const columns = splitColumns(md, source);
+      const html = columns.map((column) => {
+        return `<div class="garden-horizontal-block">${md.render(column, { ...env, horizontalBlocks: true })}</div>`;
+      });
+      return `<div class="garden-horizontal-blocks">${html.join("\n")}</div>\n`;
+    }
+
+    md.block.ruler.before("blockquote", "horizontal_blocks", parseHorizontalCallout, {
+      alt: ["paragraph", "reference", "blockquote", "list"],
+    });
+    md.renderer.rules.horizontal_blocks = (tokens, index, _options, env) => {
+      return renderColumns(tokens[index].content, env);
+    };
+
     const renderFence = md.renderer.rules.fence;
     md.renderer.rules.fence = (tokens, index, options, env, renderer) => {
       const token = tokens[index];
       if (!/^(horizontal|hblock)$/.test(token.info.trim())) {
         return renderFence(tokens, index, options, env, renderer);
       }
-
-      const columns = splitColumns(md, token.content);
-      const html = columns.map((column) => {
-        return `<div class="garden-horizontal-block">${md.render(column, { ...env, horizontalBlocks: true })}</div>`;
-      });
-      return `<div class="garden-horizontal-blocks">${html.join("\n")}</div>\n`;
+      return renderColumns(token.content, env);
     };
   },
 

@@ -1,6 +1,6 @@
 # Horizontal Blocks for Digital Garden
 
-Publish side-by-side Markdown columns from Obsidian's Horizontal Blocks fences. Columns share the available width and stack on narrow screens. Published notes with a visible title also get a reading-time estimate based on 200 words per minute, rounded up with a one-minute minimum.
+Publish side-by-side Markdown columns from Obsidian. Columns share the available width and stack on narrow screens. Published notes with a visible title also get a reading-time estimate based on 200 words per minute, rounded up with a one-minute minimum.
 
 ![Example note showing a reading-time label and two-column Markdown blocks](screenshot.png)
 
@@ -14,7 +14,25 @@ To host this plugin yourself, publish the extracted files in a public GitHub rep
 
 Copy the entire `horizontal-blocks` directory into `src/plugins/` of a plugin-enabled [Digital Garden template](https://github.com/oleeskild/digitalgarden), so the manifest is at `src/plugins/horizontal-blocks/garden-plugin.json`. Rebuild the garden. No extra packages are needed.
 
-## Write columns
+## Write columns with images from your vault
+
+Use the `[!horizontal]` callout and put `> ---` between columns. Keep the `>` prefix on every line. Digital Garden can read the image embeds in the callout and uploads those files when you publish the note. In Obsidian the callout uses the standard stacked layout.
+
+~~~markdown
+> [!horizontal]
+> ### First column
+> ![[first-image.png]]
+> ---
+> ### Second column
+> ![[second-image.png]]
+> ---
+> ### Third column
+> ![[third-image.png]]
+~~~
+
+To migrate an existing block, replace its opening fence with `> [!horizontal]`, remove the closing fence and add `> ` to each line of the body. Publish the note again after updating the garden plugin.
+
+## Fenced Horizontal Blocks
 
 ~~~markdown
 ```horizontal
@@ -31,11 +49,7 @@ Add an image, link, or list here.
 
 Use either `horizontal` or `hblock`. Put each separator on its own unindented line. For a horizontal rule inside a column, use `***`. The published columns have equal widths and the page does not include Obsidian's editor controls or saved column widths.
 
-## Obsidian images in columns
-
-Use `![[image.png]]` or `![[Attachments/image.png]]` for an image already published to the garden. If multiple published images have the same filename, use the full vault-relative path. Standard Markdown image syntax works with public URLs too.
-
-Digital Garden's Obsidian publisher skips attachment discovery inside fenced blocks. To upload a local image to Forestry, include its embed in the regular body of a published note outside any code fence. Then publish or republish that note. Keep the embed there so the attachment remains part of the published garden.
+Digital Garden's publisher skips attachment discovery inside code fences. To keep the fenced format, use public Markdown image URLs or links to files already published in the garden. If multiple published images have the same filename, use the full vault-relative path.
 
 ## Reading time
 
