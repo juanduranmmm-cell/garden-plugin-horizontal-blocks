@@ -1,0 +1,33 @@
+.garden-horizontal-blocks {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin-block: 1rem;
+}
+
+.garden-horizontal-block {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.garden-horizontal-block img {
+  max-width: 100%;
+  height: auto;
+}
+
+.garden-horizontal-block pre {
+  overflow-x: auto;
+}
+
+.garden-reading-time {
+  color: var(--text-muted, inherit);
+  font-size: 0.875em;
+  margin-block: 0.25rem 0.75rem;
+}
+
+@media (max-width: 700px) {
+  .garden-horizontal-blocks {
+    grid-auto-flow: row;
+  }
+}
