@@ -1,6 +1,6 @@
 # Horizontal Blocks for Digital Garden
 
-Publish side-by-side Markdown columns from Obsidian. Columns share the available width and stack on narrow screens. Published notes with a visible title also get a reading-time estimate based on 200 words per minute, rounded up with a one-minute minimum.
+Publish side-by-side Markdown columns from Obsidian's Horizontal Blocks fences. Columns share the available width and stack on narrow screens. Published notes with a visible title also get a reading-time estimate based on 200 words per minute, rounded up with a one-minute minimum.
 
 ![Example note showing a reading-time label and two-column Markdown blocks](screenshot.png)
 
@@ -14,27 +14,28 @@ To host this plugin yourself, publish the extracted files in a public GitHub rep
 
 Copy the entire `horizontal-blocks` directory into `src/plugins/` of a plugin-enabled [Digital Garden template](https://github.com/oleeskild/digitalgarden), so the manifest is at `src/plugins/horizontal-blocks/garden-plugin.json`. Rebuild the garden. No extra packages are needed.
 
-## Use your existing Horizontal Blocks
-
-Write your columns with `horizontal` or `hblock` and put `---` on each separator line.
+## Write columns
 
 ~~~markdown
 ```horizontal
 ### First column
-![[first-image.png]]
+
+Write Markdown here.
 ---
+
 ### Second column
-![[second-image.png]]
+
+Add an image, link, or list here.
 ```
 ~~~
 
-The garden plugin looks up published attachments across folders. Use the full vault-relative path when different folders contain the same filename. Digital Garden's Obsidian publisher discovers attachments outside code fences. The garden plugin renders those assets after they reach the site.
+Use either `horizontal` or `hblock`. Put each separator on its own unindented line. For a horizontal rule inside a column, use `***`. The published columns have equal widths and the page does not include Obsidian's editor controls or saved column widths.
 
-## Set the column backgrounds
+## Obsidian images in columns
 
-Open **Settings → Digital Garden → Plugins → Manage plugins → Installed → Horizontal Blocks** and expand its settings. Enter a hex color such as `#334466` in **Column backgrounds** to apply it to every column. A list such as `#334466, #3E2A4D, #243D33` sets the colors in order for all blocks on the site. An empty field or position uses the theme background. Save the plugin settings to rebuild the garden.
+Use `![[image.png]]` or `![[Attachments/image.png]]` for an image already published to the garden. If multiple published images have the same filename, use the full vault-relative path. Standard Markdown image syntax works with public URLs too.
 
-The same setting applies to `[!horizontal]` callouts. Colors entered directly in a column in version 1.3.0 still take precedence for that column.
+Digital Garden's Obsidian publisher skips attachment discovery inside fenced blocks. To upload a local image to Forestry, include its embed in the regular body of a published note outside any code fence. Then publish or republish that note. Keep the embed there so the attachment remains part of the published garden.
 
 ## Reading time
 
