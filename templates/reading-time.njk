@@ -1,1 +1,6 @@
-
+{% if settings.dgShowInlineTitle === true and dgReadingTime !== false %}
+  {% set readingMinutes = content | horizontalBlocksReadingMinutes %}
+  {% if readingMinutes %}
+    <p class="garden-reading-time">{{ readingMinutes }} min read</p>
+  {% endif %}
+{% endif %}
